@@ -397,7 +397,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     ## planning scene to ignore collisions between those links and the box. For the Panda
     ## robot, we set ``grasping_group = 'hand'``. If you are using a different robot,
     ## you should change this value to the name of your end effector group name.
-    grasping_group = 'hand'
+    grasping_group = 'panda_hand'
     touch_links = robot.get_link_names(group=grasping_group)
     scene.attach_box(eef_link, box_name, touch_links=touch_links)
     ## END_SUB_TUTORIAL
@@ -467,9 +467,19 @@ def main():
     raw_input()
     tutorial.go_to_pose_goal()
 
+    print "============ Press `Enter` to execute a movement using a joint state goal ..."
+    raw_input()
+    tutorial.go_to_joint_state()
+
+
+    print "============ Press `Enter` to execute a movement using a pose goal ..."
+    raw_input()
+    tutorial.go_to_pose_goal()
+
+
     print "============ Press `Enter` to plan and display a Cartesian path ..."
     raw_input()
-    cartesian_plan, fraction = tutorial.plan_cartesian_path()
+    cartesian_plan, fraction = tutorial.plan_cartesian_path(scale=1)
 
     print "============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ..."
     raw_input()
@@ -487,9 +497,17 @@ def main():
     raw_input()
     tutorial.attach_box()
 
-    print "============ Press `Enter` to plan and execute a path with an attached collision object ..."
+    print "============ Press `Enter` to execute a movement using a pose goal ..."
+    raw_input()
+    tutorial.go_to_pose_goal()
+
+    print "============ Press `Enter` to plan and diaplay a path with an attached collision object ..."
     raw_input()
     cartesian_plan, fraction = tutorial.plan_cartesian_path(scale=-1)
+    tutorial.display_trajectory(cartesian_plan)
+
+    print "============ Press `Enter` to execute a path with an attached collision object ..."
+    raw_input()
     tutorial.execute_plan(cartesian_plan)
 
     print "============ Press `Enter` to detach the box from the Panda robot ..."
