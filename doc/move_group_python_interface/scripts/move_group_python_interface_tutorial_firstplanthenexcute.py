@@ -262,6 +262,8 @@ class MoveGroupPythonInterfaceTutorial(object):
         waypoints = []
 
         wpose = move_group.get_current_pose().pose
+	waypoints.append(copy.deepcopy(wpose))
+
         wpose.position.z -= scale * 0.1  # First move up (z)
         wpose.position.y += scale * 0.2  # and sideways (y)
         waypoints.append(copy.deepcopy(wpose))
@@ -277,6 +279,7 @@ class MoveGroupPythonInterfaceTutorial(object):
         # translation.  We will disable the jump threshold by setting it to 0.0,
         # ignoring the check for infeasible jumps in joint space, which is sufficient
         # for this tutorial.
+	# print(waypoints)
         (plan, fraction) = move_group.compute_cartesian_path(
                                        waypoints,   # waypoints to follow
                                        0.01,        # eef_step
@@ -391,9 +394,9 @@ class MoveGroupPythonInterfaceTutorial(object):
         box_pose = geometry_msgs.msg.PoseStamped()
         box_pose.header.frame_id = "panda_hand"
         box_pose.pose.orientation.w = 1.0
-        box_pose.pose.position.z = 0.2  # above the panda_hand frame
+        box_pose.pose.position.z = 0.11  # above the panda_hand frame
         box_name = "box"
-        scene.add_box(box_name, box_pose, size=(0.07, 0.07, 0.07))
+        scene.add_box(box_name, box_pose, size=(0.075, 0.075, 0.075))
 
         ## END_SUB_TUTORIAL
         # Copy local variables back to class variables. In practice, you should use the class
@@ -423,7 +426,7 @@ class MoveGroupPythonInterfaceTutorial(object):
         ## you should change this value to the name of your end effector group name.
         grasping_group = "panda_hand"
         touch_links = robot.get_link_names(group=grasping_group)
-	print(touch_links)
+	# print(touch_links)
         scene.attach_box(eef_link, box_name, touch_links=touch_links)
         ## END_SUB_TUTORIAL
 
@@ -508,18 +511,24 @@ def main():
         input("============ Press `Enter` to execute a saved path ...")
         tutorial.execute_plan(cartesian_plan)
 
+
+        input("============ Press `Enter` to plan and display a new Cartesian path ...")
+        cartesian_plan, fraction = tutorial.plan_cartesian_path(scale=-1)
+
+
         input("============ Press `Enter` to add a box to the planning scene ...")
         tutorial.add_box()
+
 
         input("============ Press `Enter` to attach a Box to the Panda robot ...")
         tutorial.attach_box()
 
+
         input(
-            "============ Press `Enter` to plan and execute a path with an attached collision object ..."
+            "============ Press `Enter` to execute a path with an attached collision object ..."
         )
-        cartesian_plan, fraction = tutorial.plan_cartesian_path(scale=-1)
-	# print(cartesian_plan)
         tutorial.execute_plan(cartesian_plan)
+
 
         input("============ Press `Enter` to detach the box from the Panda robot ...")
         tutorial.detach_box()
